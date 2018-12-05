@@ -1,0 +1,35 @@
+LDR		R1, =0x0 ; i = 0
+		LDR		R2, =0x0 ; j= 0
+		LDR		R5, =DataNum
+		LDR		R5, [R5]
+		LDR		R3, =MyARR
+LOOP1
+		CMP		R1, R5 ;compares i and DataNum
+		BEQ		END1
+		ADDS		R1, R1, #1 ;i=i+1
+		MOV		R2,#0x0 ; sets j to 0 at the beginning of loop2
+LOOP2
+		SUBS		R6, R5, R1 ; DataNum-İ
+		CMP		R2, R6 ;Compares j and DataNum-i
+		BEQ		END2
+		LDR		R7, [R3, R2, LSL #2] ; MyARR[j]
+		ADDS		R9, R2, #1 ; r9=j+1
+		LDR		R8, [R3, R9, LSL #2] ; MyARR[j+1]
+		CMP		R7, R8 ; compares MyARR[j] and MyARR[j+1]
+		BGT		IF
+		B		ENDIF
+IF
+		MOV		R10, R7 ;temp=MyARR[j]
+		MOV		R7, R8 ;MyARR[j] = MyARR[j+1]
+		MOV		R8, R10 ;MyARR[j+1] = temp
+		STR		R7,  [R3, R2, LSL #2] ;MyARR[j] stores the MyARR[j+1]
+		STR		R8,[R3, R9, LSL #2]   ;MyARR[j+1] stores the MyARR[j]
+ENDIF
+		ADDS		R2, R2 , #1 ;j=j+1
+		BNE		LOOP2
+END2
+		CMP		R1,R5 ;Compares i and DataNum
+		BNE		LOOP1
+END1
+DataNum	DCD		10
+MyARR	DCD		0x7FFFFFF1,0x7FFFFFFF,0x00000000,0x80000000,0x80000001,0xA1234332,0x20141020,0x6FFFFFFF,0xA1234320,0x20141F20
